@@ -14,7 +14,7 @@ module.exports.connect = options => {
             makeTunnel: JOI.boolean().allow(false).required(),
             documentdbClusterDbName: JOI.string().required(),
             documentdbEndpoint: JOI.string().required(),
-            documentdbPort: JOI.string().required(),
+            documentdbPort: JOI.number().required(),
         })
         .validate(options, { allowUnknown: true })
     if (optionsValidation.error) return Promise.reject(optionsValidation.error)
