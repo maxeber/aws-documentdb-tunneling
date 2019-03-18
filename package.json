@@ -1,0 +1,22 @@
+{
+    "name": "aws-document-tunneling",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "lerna": "lerna",
+        "publish": "lerna publish",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@bitbucket.org/enkidooai/modules.git"
+    },
+    "author": "Maxim Hébert-Gareau",
+    "license": "ISC",
+    "homepage": "https://bitbucket.org/enkidooai/modules#readme",
+    "devDependencies": {
+        "eslint": "^5.15.1",
+        "lerna": "^3.13.1"
+    }
+}
