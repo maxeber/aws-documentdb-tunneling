@@ -68,17 +68,18 @@ MONGOOSE.init({
     ),
     vpcTunnelEC2Username: process.env.VPC_TUNNEL_EC2_USERNAME,
     vpcTunnelEC2Host: process.env.VPC_TUNNEL_EC2_HOST,
-    vpcTunnelEC2Port: process.env.VPC_TUNNEL_EC2_PORT,
-    vpcTunnelEC2PortLocal: process.env.VPC_TUNNEL_EC2_PORT_LOCAL,
+    vpcTunnelEC2Port: +process.env.VPC_TUNNEL_EC2_PORT,
+    vpcTunnelEC2PortLocal: +process.env.VPC_TUNNEL_EC2_PORT_LOCAL,
     vpcTunnelEC2PrivateKey: FS.readFileSync(
         PATH.join(__dirname, `keys/${process.env.VPC_TUNNEL_EC2_PRIVATE_KEY}`), 'utf8'
     ),
     documentdbClusterEndpoint: process.env.DOCUMENTDB_CLUSTER_ENDPOINT,
-    documentdbClusterPort: process.env.DOCUMENTDB_CLUSTER_PORT,
+    documentdbClusterPort: +process.env.DOCUMENTDB_CLUSTER_PORT,
     documentdbClusterDbName: process.env.DOCUMENTDB_CLUSTER_DB_NAME,
     documentdbClusterUsername: process.env.DOCUMENTDB_CLUSTER_USERNAME,
     documentdbClusterPassword: process.env.DOCUMENTDB_CLUSTER_PASSWORD,
     documentdbEndpoint: process.env.DOCUMENTDB_ENDPOINT,
+    documentdbPort: +process.env.DOCUMENTDB_PORT,
 })
     .then(success => DEBUG(success))
     .catch(error => { throw error })

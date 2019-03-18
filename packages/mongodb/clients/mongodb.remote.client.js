@@ -27,6 +27,7 @@ module.exports.connect = async options => {
             documentdbClusterUsername: JOI.string().required(),
             documentdbClusterPassword: JOI.string().required(),
             documentdbEndpoint: JOI.string().required(),
+            documentdbPort: JOI.number().required(),
         })
         .validate(options)
     if (optionsValidation.error) return Promise.reject(optionsValidation.error)
@@ -73,7 +74,7 @@ async function _connectThroughSSHTunnel(options) {
     } = options
 
     return MONGODB.connect(
-        `mongodb://${user}:${pass}@${endpoint}`, mongoDBOptions
+        `mongodb://${user}:${pass}@${endpoint}:${port}`, mongoDBOptions
     )
         .then(
             client => Promise.resolve({

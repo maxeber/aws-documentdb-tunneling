@@ -26,7 +26,7 @@ module.exports.connect = async options => {
             documentdbClusterUsername: JOI.string().required(),
             documentdbClusterPassword: JOI.string().required(),
             documentdbEndpoint: JOI.string().required(),
-
+            documentdbPort: JOI.number().required(),
         })
         .validate(options)
     if (optionsValidation.error) return Promise.reject(optionsValidation.error)
@@ -72,10 +72,11 @@ async function _connectThroughSSHTunnel(options) {
         documentdbClusterUsername: user,
         documentdbClusterPassword: pass,
         documentdbEndpoint: endpoint,
+        documentdbPort: port,
     } = options
 
     return MONGOOSE.connect(
-        `mongodb://${user}:${pass}@${endpoint}`,
+        `mongodb://${user}:${pass}@${endpoint}:${port}`,
         mongooseOptions,
     )
         .then(
@@ -93,23 +94,30 @@ async function _connectThroughSSHTunnel(options) {
  * in the same VPC as the DocumentDB cluster.
  * @param {MongooseRemoteOptions} options
  */
-async function _connect(options) {
+async function _connect({
+    documentdbClusterDbName: dbName,
+    documentdbClusterUsername: user,
+    documentdbClusterPassword: pass,
+    documentdbClusterEndpoint: endpoint,
+    documentdbClusterPort: port,
+    vpcTunnelEC2RdsSslCA: sslCA,
+}) {
 
     /**
      * @type {MONGOOSE.ConnectionOptions} Mongoose connection options.
      */
     const mongooseOptions = {
-        dbName: options.documentdbClusterDbName,
+        dbName,
         useNewUrlParser: true,
         useCreateIndex: true,
         ssl: true,
-        sslCA: options.vpcTunnelEC2RdsSslCA,
-        user: options.documentdbClusterUsername,
-        pass: options.documentdbClusterPassword,
+        sslCA,
+        user,
+        pass,
     }
 
     return MONGOOSE.connect(
-        `mongodb://${options.documentdbClusterUsername}:${options.documentdbClusterPassword}@${options.documentdbClusterEndpoint}`,
+        `mongodb://${user}:${pass}@${endpoint}:${port}`,
         mongooseOptions,
     )
         .then(
@@ -139,5 +147,6 @@ async function _connect(options) {
  *     documentdbClusterUsername: string,
  *     documentdbClusterPassword: string,
  *     documentdbEndpoint: string,
+ *     documentdbPort: number,
  * }}
  */
