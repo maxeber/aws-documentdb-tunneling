@@ -27,7 +27,7 @@ module.exports.connect = options => {
     }
 
     return MONGODB.connect(
-        `mongodb://${options.documentdbEndpoint}:${documentdbPort}`, mongodbOptions
+        `mongodb://${options.documentdbEndpoint}:${options.documentdbPort}`, mongodbOptions
     )
         .then(
             client => Promise.resolve({
