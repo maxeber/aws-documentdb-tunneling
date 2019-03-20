@@ -8,7 +8,7 @@ Mongoose wich allow SSH tunneling into a AWS DocumentDB VPC by going through a E
 ## Installation
 
 ```bash
-npm install mongooose-aws-documentdb-tunneling --save
+npm install mongoose-aws-documentdb-tunneling --save
 ```
 
 ## Usage Example
@@ -17,12 +17,12 @@ To use this SDK, call the `init` function as early as possible in the entry modu
 
 ### Models
 
-In your models, use `mongoose` from the `mongooose-aws-documentdb-tunneling` SDK:
+In your models, use `mongoose` from the `mongoose-aws-documentdb-tunneling` SDK:
 
 #### User.model.js
 
 ```JavaScript
-const MONGOOSE = require('mongooose-aws-documentdb-tunneling')
+const MONGOOSE = require('mongoose-aws-documentdb-tunneling')
 
 const UserSchema = new MONGOOSE.Schema({
     ...
@@ -39,7 +39,7 @@ In the app entry module:
 #### app.js
 
 ```JavaScript
-const MONGOOSE = require('mongooose-aws-documentdb-tunneling')
+const MONGOOSE = require('mongoose-aws-documentdb-tunneling')
 const MODELS = PATH.join(__dirname, 'databases/mongodb/models')
 
 /**
@@ -94,7 +94,7 @@ MONGOOSE.init({
 #### users.module.js
 
 ```JavaScript
-const const { MongooseClient: MONGOOSE } = require('mongooose-aws-documentdb-tunneling')
+const const { MongooseClient: MONGOOSE } = require('mongoose-aws-documentdb-tunneling')
 
 /**
  * Get all users.
