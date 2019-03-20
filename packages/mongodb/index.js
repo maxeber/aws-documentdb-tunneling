@@ -5,11 +5,11 @@ const JOI = require('joi')
 
 debug.enable('*')
 
-let MongoClient
-
 /**
  * @type {import('mongodb').MongoClient}
  */
+let MongoClient
+
 module.exports.MongoClient = () => MongoClient
 
 /**
