@@ -74,17 +74,15 @@ async function _connectThroughSSHTunnel(options) {
         documentdbEndpoint: endpoint,
         vpcTunnelEC2PortLocal: port,
     } = options
+    const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
-    return MONGOOSE.connect(
-        `mongodb://${user}:${pass}@${endpoint}:${port}`,
-        mongooseOptions,
-    )
+    return MONGOOSE.connect(uri, mongooseOptions)
         .then(
             () => Promise.resolve('Connected to DocumentDB through our EC2 ssh tunnel with Mongoose.')
         )
         .catch(
             error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with Mongoose.', error,
+                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with Mongoose.', uri, error,
             })
         )
 }

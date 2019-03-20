@@ -72,10 +72,9 @@ async function _connectThroughSSHTunnel(options) {
         documentdbEndpoint: endpoint,
         vpcTunnelEC2PortLocal: port,
     } = options
+    const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
-    return MONGODB.connect(
-        `mongodb://${user}:${pass}@${endpoint}:${port}`, mongoDBOptions
-    )
+    return MONGODB.connect(uri, mongoDBOptions)
         .then(
             client => Promise.resolve({
                 message: 'Connected to DocumentDB through our EC2 ssh tunnel with MongoDB.', client,
@@ -83,7 +82,7 @@ async function _connectThroughSSHTunnel(options) {
         )
         .catch(
             error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with MongoDB.', error,
+                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with MongoDB.', uri, error,
             })
         )
 }
