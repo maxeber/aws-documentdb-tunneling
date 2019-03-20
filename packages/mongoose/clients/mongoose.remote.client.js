@@ -72,7 +72,7 @@ async function _connectThroughSSHTunnel(options) {
         documentdbClusterUsername: user,
         documentdbClusterPassword: pass,
         documentdbEndpoint: endpoint,
-        documentdbPort: port,
+        vpcTunnelEC2PortLocal: port,
     } = options
 
     return MONGOOSE.connect(
