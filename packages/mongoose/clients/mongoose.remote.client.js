@@ -2,6 +2,7 @@ const MONGOOSE = require('mongoose')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
+const DEBUG = require('debug')('mongoose.remote')
 
 /**
  * Connect mongoose with AWS DocumentDB.
@@ -55,6 +56,8 @@ async function _connectThroughSSHTunnel(options) {
     const tunnel = await TUNNEL(tunnelConfigurations)
         .catch(err => err)
     if (tunnel instanceof Error) return Promise.reject(tunnel)
+
+    DEBUG(`Tunnel listening on port ${options.vpcTunnelEC2PortLocal}.`)
 
     /**
      * @type {MONGOOSE.ConnectionOptions} Mongoose connection options.
