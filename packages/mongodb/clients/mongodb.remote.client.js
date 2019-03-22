@@ -69,8 +69,8 @@ async function _connectThroughSSHTunnel(options) {
         ssl: true,
         sslCA: options.sslCA,
         auth: {
-            user,
-            password: pass,
+            user: options.documentdbClusterUsername,
+            password: options.documentdbClusterPassword,
         },
     }
     const {
