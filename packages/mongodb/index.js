@@ -39,7 +39,7 @@ module.exports.init = (options, callback = null) => {
         .then(
             ({ message, client }) => {
 
-                DEBUG({ 'message': result, 'client': client })
+                DEBUG({ 'message': message, 'client': client })
 
                 MongoClient = client
 
