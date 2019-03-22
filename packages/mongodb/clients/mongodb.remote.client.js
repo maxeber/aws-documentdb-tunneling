@@ -16,7 +16,7 @@ module.exports.connect = async options => {
         .keys({
             env: JOI.string().allow('remote').required(),
             makeTunnel: JOI.boolean().required(),
-            vpcTunnelEC2RdsSslCA: JOI.string().required(),
+            sslCA: JOI.string().required(),
             vpcTunnelEC2Username: JOI.string().required(),
             vpcTunnelEC2Host: JOI.string().required(),
             vpcTunnelEC2Port: JOI.number().required(),
@@ -67,7 +67,7 @@ async function _connectThroughSSHTunnel(options) {
     const mongoDBOptions = {
         useNewUrlParser: true,
         ssl: true,
-        sslCA: options.vpcTunnelEC2RdsSslCA,
+        sslCA: options.sslCA,
     }
     const {
         documentdbClusterUsername: user,
@@ -98,12 +98,12 @@ async function _connectThroughSSHTunnel(options) {
  * in the same VPC as the DocumentDB cluster.
  * @param {MongoDBRemoteOptions} options
  */
-async function _connect({
+function _connect({
     documentdbClusterUsername: user,
     documentdbClusterPassword: pass,
     documentdbClusterEndpoint: endpoint,
     documentdbClusterPort: port,
-    vpcTunnelEC2RdsSslCA: sslCA,
+    sslCA: sslCA,
 }) {
 
     /**
@@ -134,8 +134,8 @@ async function _connect({
  * @typedef MongoDBRemoteOptions
  * @type {{
  *     env: 'remote',
- *     makeTunnel: true | false,
- *     vpcTunnelEC2RdsSslCA: string,
+ *     makeTunnel: boolean,
+ *     sslCA: string,
  *     vpcTunnelEC2Username: string,
  *     vpcTunnelEC2Host: string,
  *     vpcTunnelEC2Port: number,

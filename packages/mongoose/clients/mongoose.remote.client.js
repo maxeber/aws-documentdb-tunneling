@@ -15,7 +15,7 @@ module.exports.connect = async options => {
         .keys({
             env: JOI.string().allow('remote').required(),
             makeTunnel: JOI.boolean().required(),
-            vpcTunnelEC2RdsSslCA: JOI.string().required(),
+            sslCA: JOI.string().required(),
             vpcTunnelEC2Username: JOI.string().required(),
             vpcTunnelEC2Host: JOI.string().required(),
             vpcTunnelEC2Port: JOI.number().required(),
@@ -67,7 +67,7 @@ async function _connectThroughSSHTunnel(options) {
         useNewUrlParser: true,
         useCreateIndex: true,
         ssl: true,
-        sslCA: options.vpcTunnelEC2RdsSslCA,
+        sslCA: options.sslCA,
         user: options.documentdbClusterUsername,
         pass: options.documentdbClusterPassword,
     }
@@ -101,7 +101,7 @@ async function _connect({
     documentdbClusterPassword: pass,
     documentdbClusterEndpoint: endpoint,
     documentdbClusterPort: port,
-    vpcTunnelEC2RdsSslCA: sslCA,
+    sslCA: sslCA,
 }) {
 
     /**
@@ -136,7 +136,7 @@ async function _connect({
  * @type {{
  *     env: 'remote',
  *     makeTunnel: boolean,
- *     vpcTunnelEC2RdsSslCA: string,
+ *     sslCA: string,
  *     vpcTunnelEC2Username: string,
  *     vpcTunnelEC2Host: string,
  *     vpcTunnelEC2Port: number,

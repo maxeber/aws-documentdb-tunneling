@@ -50,7 +50,8 @@ module.exports.init = (options, callback = null) => {
  * @typedef MongooseOptions
  * @type {{
  *     env: 'local' | 'remote',
- *     vpcTunnelEC2vpcTunnelEC2RdsSslCA: string,
+ *     makeTunnel: boolean,
+ *     sslCA: string,
  *     vpcTunnelEC2Username: string,
  *     vpcTunnelEC2Host: string,
  *     vpcTunnelEC2Port: number,

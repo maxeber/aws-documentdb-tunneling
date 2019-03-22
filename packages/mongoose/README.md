@@ -63,7 +63,7 @@ MONGOOSE.init({
     makeTunnel: process.env.IN_VPC === 'false'
         ? false
         : true,
-    vpcTunnelEC2RdsSslCA: FS.readFileSync(
+    sslCA: FS.readFileSync(
         PATH.join(__dirname, 'keys', process.env.VPC_TUNNEL_EC2_RDS_SSL_CA_KEY), 'utf8'
     ),
     vpcTunnelEC2Username: process.env.VPC_TUNNEL_EC2_USERNAME,
