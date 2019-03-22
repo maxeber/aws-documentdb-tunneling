@@ -1,10 +1,8 @@
-const debug = require('debug')
 const MONGOOSE = require('mongoose')
 const MONGOOSE_LOCAL = require('./clients/mongoose.local.client')
 const MONGOOSE_REMOTE = require('./clients/mongoose.remote.client')
 const JOI = require('joi')
-
-debug.enable('*')
+const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling')
 
 module.exports.MongooseClient = MONGOOSE
 

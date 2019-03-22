@@ -1,9 +1,7 @@
-const debug = require('debug')
 const MONGODB_LOCAL = require('./clients/mongodb.local.client')
 const MONGODB_REMOTE = require('./clients/mongodb.remote.client')
 const JOI = require('joi')
-
-debug.enable('*')
+const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling')
 
 /**
  * @type {import('mongodb').MongoClient}
@@ -39,13 +37,15 @@ module.exports.init = (options, callback = null) => {
 
     return connect(options)
         .then(
-            ({ message, client }) => {
+            result => {
 
-                MongoClient = client
+                DEBUG({ resultFromConnect })
+
+                MongoClient = result.client
 
                 return callback
-                    ? callback(null, message)
-                    : Promise.resolve(message)
+                    ? callback(null, result.message)
+                    : Promise.resolve(result.message)
             }
         )
         .catch(
