@@ -77,6 +77,9 @@ async function _connectThroughSSHTunnel(options) {
     } = options
     const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
+    DEBUG({ uri, mongoDBOptions })
+    console.log({ uri, mongoDBOptions })
+
     return MONGODB.connect(uri, mongoDBOptions)
         .then(
             client => Promise.resolve({
