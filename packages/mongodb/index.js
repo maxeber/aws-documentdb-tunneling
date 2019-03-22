@@ -37,13 +37,15 @@ module.exports.init = (options, callback = null) => {
 
     return connect(options)
         .then(
-            ({ message, client }) => {
+            (result) => {
 
-                MongoClient = client
+                DEBUG({ 'result-from-connect': result })
+
+                MongoClient = result
 
                 return callback
-                    ? callback(null, message)
-                    : Promise.resolve(message)
+                    ? callback(null, result)
+                    : Promise.resolve(result)
             }
         )
         .catch(
