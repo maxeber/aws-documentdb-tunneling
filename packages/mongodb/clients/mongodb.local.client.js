@@ -30,7 +30,7 @@ module.exports.connect = options => {
 
     DEBUG(`Connecting to ${uri}.`)
 
-    return MONGODB.connect(uri)
+    return MONGODB.connect(uri, mongodbOptions)
         .then(
             client => Promise.resolve({
                 message: 'Connected to local MongoDB.', client,
