@@ -122,17 +122,17 @@ function _connect({
             password: pass,
         },
     }
+    const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
-    return MONGODB.connect(
-        `mongodb://${user}:${pass}@${endpoint}:${port}`,
-        mongoDBOptions,
-    )
+    DEBUG({ mongoDBOptions, uri })
+
+    return MONGODB.connect(uri, mongoDBOptions)
         .then(
-            () => Promise.resolve('Connected to DocumentDB with MongoDB.')
+            () => Promise.resolve({ message: 'Connected to DocumentDB with MongoDB.', client, })
         )
         .catch(
             error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB with MongoDB.', error,
+                message: 'Error. Could not connect to DocumentDB with MongoDB.', error, uri,
             })
         )
 }
