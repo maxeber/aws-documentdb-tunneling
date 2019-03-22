@@ -2,7 +2,7 @@ const MONGODB = require('mongodb')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
-const DEBUG = require('debug')('mongodb.remote')
+const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.remote')
 
 /**
  * Connect mongodb with AWS DocumentDB.
@@ -81,8 +81,7 @@ async function _connectThroughSSHTunnel(options) {
     } = options
     const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
-    DEBUG({ uri, mongoDBOptions })
-    console.log({ uri, mongoDBOptions })
+    DEBUG(`Connecting to ${uri}.`)
 
     return MONGODB.connect(uri, mongoDBOptions)
         .then(
@@ -123,8 +122,6 @@ function _connect({
         },
     }
     const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
-
-    DEBUG({ mongoDBOptions, uri })
 
     return MONGODB.connect(uri, mongoDBOptions)
         .then(

@@ -2,7 +2,7 @@ const MONGOOSE = require('mongoose')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
-const DEBUG = require('debug')('mongoose.remote')
+const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling.remote')
 
 /**
  * Connect mongoose with AWS DocumentDB.
@@ -79,6 +79,8 @@ async function _connectThroughSSHTunnel(options) {
     } = options
     const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
+    DEBUG(`Connecting to ${uri}.`)
+
     return MONGOOSE.connect(uri, mongooseOptions)
         .then(
             () => Promise.resolve('Connected to DocumentDB through our EC2 ssh tunnel with Mongoose.')
@@ -116,6 +118,8 @@ async function _connect({
         user,
         pass,
     }
+    const uri =
+
 
     return MONGOOSE.connect(
         `mongodb://${user}:${pass}@${endpoint}:${port}`,

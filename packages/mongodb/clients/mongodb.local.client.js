@@ -1,5 +1,6 @@
 const MONGODB = require('mongodb')
 const JOI = require('joi')
+const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.local')
 
 /**
  * Start mongodb in local.
@@ -25,10 +26,11 @@ module.exports.connect = options => {
     const mongodbOptions = {
         useNewUrlParser: true,
     }
+    const uri = `mongodb://${options.documentdbEndpoint}:${options.documentdbPort}`
 
-    return MONGODB.connect(
-        `mongodb://${options.documentdbEndpoint}:${options.documentdbPort}`, mongodbOptions
-    )
+    DEBUG(`Connecting to ${uri}.`)
+
+    return MONGODB.connect(uri)
         .then(
             client => Promise.resolve({
                 message: 'Connected to local MongoDB.', client,
