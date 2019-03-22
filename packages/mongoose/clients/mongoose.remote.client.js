@@ -118,13 +118,11 @@ async function _connect({
         user,
         pass,
     }
-    const uri =
+    const uri = `mongodb://${user}:${pass}@${endpoint}:${port}`
 
+    DEBUG(`Connecting to ${uri}.`)
 
-    return MONGOOSE.connect(
-        `mongodb://${user}:${pass}@${endpoint}:${port}`,
-        mongooseOptions,
-    )
+    return MONGOOSE.connect(uri, mongooseOptions)
         .then(
             () => Promise.resolve('Connected to DocumentDB with Mongoose.')
         )
