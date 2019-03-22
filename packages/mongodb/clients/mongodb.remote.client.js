@@ -68,6 +68,10 @@ async function _connectThroughSSHTunnel(options) {
         useNewUrlParser: true,
         ssl: true,
         sslCA: options.sslCA,
+        auth: {
+            user,
+            password: pass,
+        },
     }
     const {
         documentdbClusterUsername: user,
@@ -113,6 +117,10 @@ function _connect({
         useNewUrlParser: true,
         ssl: true,
         sslCA,
+        auth: {
+            user,
+            password: pass,
+        },
     }
 
     return MONGODB.connect(
