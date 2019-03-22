@@ -125,7 +125,9 @@ function _connect({
 
     return MONGODB.connect(uri, mongoDBOptions)
         .then(
-            client => Promise.resolve({ message: 'Connected to DocumentDB with MongoDB.', client, })
+            client => Promise.resolve({
+                message: 'Connected to DocumentDB with MongoDB.', client: client,
+            })
         )
         .catch(
             error => Promise.reject({
