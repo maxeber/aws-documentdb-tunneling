@@ -1,6 +1,6 @@
 {
     "name": "mongodb-aws-documentdb-tunneling",
-    "version": "1.0.0-alpha.9",
+    "version": "1.0.0-alpha.10",
     "description": "Mongodb wich allow SSH tunneling into a AWS documentDb VPC by going through a EC2 instance hosted in the same VPC.",
     "main": "index.js",
     "scripts": {
