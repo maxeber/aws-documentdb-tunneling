@@ -1,0 +1,25 @@
+{
+  "name": "elasticsearch-aws-tunneling",
+  "version": "1.0.0",
+  "description": "Elasticsearch wich allow SSH tunneling into a AWS Elasticsearch VPC by going through a EC2 instance hosted in the same VPC.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maxeber/aws-tunneling.git"
+  },
+  "author": "Maxim Hébert-Gareau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxeber/aws-tunneling/issues"
+  },
+  "homepage": "https://github.com/maxeber/aws-tunneling#readme",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.2.0",
+    "debug": "^4.1.1",
+    "joi": "^14.3.1",
+    "tunnel-ssh": "^4.1.4"
+  }
+}
