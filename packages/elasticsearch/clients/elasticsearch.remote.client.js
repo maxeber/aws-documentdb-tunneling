@@ -84,15 +84,15 @@ async function _connectThroughSSHTunnel(options) {
  * @param {ElasticsearchRemoteOptions} options
  */
 function _connect({
-    elasticsearchClusterEndpoint: endpoint,
-    elasticsearchClusterPort: port,
+    elasticsearchClusterEndpoint,
+    elasticsearchClusterPort,
 }) {
 
     /**
      * @type {import '@elastic/elasticsearch'.ClientOptions} Elasticsearch client options.
      */
     const elasticsearchOptions = {
-        node: `${endpoint}:${port}`,
+        node: `${elasticsearchClusterEndpoint}:${elasticsearchClusterPort}`,
     }
 
     DEBUG(`Instatiating Elasticsearch client for node "${elasticsearchOptions.node}".`)

@@ -26,7 +26,7 @@ module.exports.connect = options => {
      * @type {import '@elastic/elasticsearch'.ClientOptions}
      */
     const elasticsearchOptions = {
-        node: `https://${options.elasticsearchNodeEndpoint}:${options.elasticsearchNodePort}`,
+        node: `${options.elasticsearchNodeEndpoint}:${options.elasticsearchNodePort}`,
     }
 
     DEBUG(`Instatiating Elasticsearch client for node "${elasticsearchOptions.node}".`)
