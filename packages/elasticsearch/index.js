@@ -14,7 +14,7 @@ module.exports.ElasticsearchClient = () => ElasticsearchClient
 
 /**
  * To use this SDK, call the `init` function as early as possible in the entry modules.
- * @param {MongoDBOptions} options Options for the SSH tunnel and `elasticsearch` client.
+ * @param {ElasticsearchOptions} options Options for the SSH tunnel and `elasticsearch` client.
  * @async
  * @callback
  */
@@ -52,7 +52,7 @@ module.exports.init = (options, callback = null) => {
 }
 
 /**
- * @typedef MongoDBOptions
+ * @typedef ElasticsearchOptions
  * @type {{
  *     env: 'local' | 'remote',
  *     makeTunnel: boolean,
@@ -60,12 +60,10 @@ module.exports.init = (options, callback = null) => {
  *     vpcTunnelEC2Username: string,
  *     vpcTunnelEC2Host: string,
  *     vpcTunnelEC2Port: number,
- *     documentdbClusterEndpoint: string,
- *     documentdbClusterPort: number,
  *     vpcTunnelEC2PrivateKey: string,
- *     documentdbClusterDbName: string,
- *     documentdbClusterUsername: string,
- *     documentdbClusterPassword: string,
- *     documentdbEndpoint: string,
+ *     elasticsearchClusterEndpoint: string,
+ *     elasticsearchClusterPort: number,
+ *     elasticsearchNodeEndpoint: string,
+ *     elasticsearchNodePort: string,
  * }}
  */
