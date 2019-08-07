@@ -141,6 +141,6 @@ function _connect({
  *     elasticsearchClusterEndpoint: string,
  *     elasticsearchClusterPort: number,
  *     elasticsearchNodeEndpoint: string,
- *     elasticsearchNodePort: string,
+ *     elasticsearchNodePort: number,
  * }}
  */
