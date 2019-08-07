@@ -20,7 +20,7 @@ module.exports.connect = options => {
             env: JOI.string().allow(['dev']).required(),
             makeTunnel: JOI.boolean().allow(false).required(),
             elasticsearchNodeEndpoint: JOI.string().required(),
-            elasticsearchNodePort: JOI.number().required(),
+            elasticsearchNodePort: JOI.string().required(),
         })
         .validate(options, { allowUnknown: true })
     if (optionsValidation.error) throw optionsValidation.error
@@ -55,6 +55,6 @@ module.exports.connect = options => {
  *     env: 'dev',
  *     makeTunnel: false,
  *     elasticsearchNodeEndpoint: string,
- *     elasticsearchNodePort: number,
+ *     elasticsearchNodePort: string,
  * }}
  */

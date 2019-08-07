@@ -61,6 +61,6 @@ module.exports.init = options => {
  *     elasticsearchClusterEndpoint: string,
  *     elasticsearchClusterPort: number,
  *     elasticsearchNodeEndpoint: string,
- *     elasticsearchNodePort: number,
+ *     elasticsearchNodePort: string,
  * }}
  */
