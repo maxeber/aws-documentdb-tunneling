@@ -12,6 +12,7 @@
         "debug": "^4.1.1",
         "joi": "^14.3.1",
         "mongoose": "^5.4.19",
+        "node-http-error": "^2.0.0",
         "tunnel-ssh": "^4.1.4"
     },
     "repository": {

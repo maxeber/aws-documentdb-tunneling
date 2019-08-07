@@ -4,6 +4,7 @@ const { Client } = require('@elastic/elasticsearch')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('elasticsearch-aws-tunneling.remote')
 
 /**
@@ -13,6 +14,8 @@ const DEBUG = require('debug')('elasticsearch-aws-tunneling.remote')
  * @async
  */
 module.exports.connect = async options => {
+
+    DEBUG('Connecting to remote Elasticsearch.')
 
     const optionsValidation = JOI
         .object()
@@ -30,13 +33,11 @@ module.exports.connect = async options => {
             elasticsearchNodePort: JOI.string().required(),
         })
         .validate(options)
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
-    const client = options.makeTunnel
+    return options.makeTunnel
         ? await _connectThroughSSHTunnel(options)
         : _connect(options)
-
-    return Promise.resolve(client)
 }
 
 /**
@@ -45,6 +46,8 @@ module.exports.connect = async options => {
  * @param {ElasticsearchRemoteOptions} options
  */
 async function _connectThroughSSHTunnel(options) {
+
+    DEBUG('Client is outside VPC, connecting to cluster through SSH tunnel.')
 
     /**
      * @type {import 'tunnel-ssh'.Config}
@@ -60,7 +63,9 @@ async function _connectThroughSSHTunnel(options) {
     }
     const tunnel = await TUNNEL(tunnelConfigurations)
         .catch(err => err)
-    if (tunnel instanceof Error) return Promise.reject(tunnel)
+    if (tunnel instanceof Error) return Promise.reject(
+        new HTTPError(500, 'Error. Could not create SSH tunnel.', { error: tunnel, options })
+    )
 
     DEBUG(`Tunnel listening on port ${options.elasticsearchNodePort}.`)
 
@@ -73,9 +78,18 @@ async function _connectThroughSSHTunnel(options) {
 
     DEBUG(`Instatiating Elasticsearch client for node "${elasticsearchOptions.node}".`)
 
-    return Promise.resolve(
-        new Client(elasticsearchOptions)
-    )
+    try {
+        const client = new Client(elasticsearchOptions)
+
+        return Promise.resolve({
+            message: 'Connected to remote Elasticsearch through our EC2 ssh tunnel.',
+            client: client,
+        })
+    } catch (error) {
+        return Promise.reject(
+            new HTTPError(500, 'Error. Could not connect to remote Elasticsearch through our EC2 ssh tunnel..', { error, elasticsearchOptions })
+        )
+    }
 }
 
 /**
@@ -88,6 +102,8 @@ function _connect({
     elasticsearchClusterPort,
 }) {
 
+    DEBUG('Client is inside VPC, connecting directly to cluster.')
+
     /**
      * @type {import '@elastic/elasticsearch'.ClientOptions} Elasticsearch client options.
      */
@@ -97,9 +113,19 @@ function _connect({
 
     DEBUG(`Instatiating Elasticsearch client for node "${elasticsearchOptions.node}".`)
 
-    return Promise.resolve(
-        new Client(elasticsearchOptions)
-    )
+    try {
+        const client = new Client(elasticsearchOptions)
+
+        return Promise.resolve({
+            message: 'Connected to remote Elasticsearch.',
+            client: client,
+        })
+
+    } catch (error) {
+        return Promise.reject(
+            new HTTPError(500, 'Error. Could not connect to remote Elasticsearch.', { error, elasticsearchOptions })
+        )
+    }
 }
 
 /**

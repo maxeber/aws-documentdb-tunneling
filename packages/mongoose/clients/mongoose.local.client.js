@@ -1,5 +1,6 @@
 const MONGOOSE = require('mongoose')
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling.local')
 
 /**
@@ -7,6 +8,8 @@ const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling.local')
  * @param {MongooseLocalOptions} options
  */
 module.exports.connect = options => {
+
+    DEBUG('Connecting to local Mongoose.')
 
     const optionsValidation = JOI
         .object()
@@ -18,7 +21,7 @@ module.exports.connect = options => {
             documentdbPort: JOI.number().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
     /**
      * @type {MONGOOSE.ConnectionOptions} Mongoose connection options.
@@ -34,12 +37,16 @@ module.exports.connect = options => {
 
     return MONGOOSE.connect(uri, mongooseOptions)
         .then(
-            () => Promise.resolve('Connected to local MongoDB with Mongoose.')
+            () => Promise.resolve({
+                message: 'Connected to local MongoDB with Mongoose.',
+                client: MONGOOSE,
+            })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to local MongoDB with Mongoose.', error,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to local MongoDB with Mongoose.',
+                { error, uri, mongooseOptions }
+            ))
         )
 }
 

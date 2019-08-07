@@ -1,5 +1,6 @@
 const MONGODB = require('mongodb')
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.local')
 
 /**
@@ -8,6 +9,8 @@ const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.local')
  * @returns {{message: string, client: MONGODB.MongoClient}}
  */
 module.exports.connect = options => {
+
+    DEBUG('Connecting to local MongoDB.')
 
     const optionsValidation = JOI
         .object()
@@ -18,7 +21,7 @@ module.exports.connect = options => {
             documentdbPort: JOI.number().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
     /**
      * @type {MONGODB.MongoClientOptions} MongoDB connection options.
@@ -37,9 +40,10 @@ module.exports.connect = options => {
             })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to local MongoDB.', error,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to local MongoDB.',
+                { error, uri, mongodbOptions },
+            ))
         )
 }
 

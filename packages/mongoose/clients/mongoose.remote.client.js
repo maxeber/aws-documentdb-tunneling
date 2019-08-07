@@ -2,6 +2,7 @@ const MONGOOSE = require('mongoose')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling.remote')
 
 /**
@@ -9,6 +10,8 @@ const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling.remote')
  * @param {MongooseRemoteOptions} options
  */
 module.exports.connect = async options => {
+
+    DEBUG('Connecting to remote Mongoose.')
 
     const optionsValidation = JOI
         .object()
@@ -30,7 +33,7 @@ module.exports.connect = async options => {
             documentdbPort: JOI.number().required(),
         })
         .validate(options)
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
     return options.makeTunnel
         ? _connectThroughSSHTunnel(options)
@@ -55,7 +58,9 @@ async function _connectThroughSSHTunnel(options) {
     }
     const tunnel = await TUNNEL(tunnelConfigurations)
         .catch(err => err)
-    if (tunnel instanceof Error) return Promise.reject(tunnel)
+    if (tunnel instanceof Error) return Promise.reject(
+        new HTTPError(500, 'Error. Could not create SSH tunnel.', { error: tunnel, options })
+    )
 
     DEBUG(`Tunnel listening on port ${options.vpcTunnelEC2PortLocal}.`)
 
@@ -83,12 +88,16 @@ async function _connectThroughSSHTunnel(options) {
 
     return MONGOOSE.connect(uri, mongooseOptions)
         .then(
-            () => Promise.resolve('Connected to DocumentDB through our EC2 ssh tunnel with Mongoose.')
+            () => Promise.resolve({
+                message: 'Connected to remote DocumentDB through our EC2 ssh tunnel with Mongoose.',
+                client: MONGOOSE,
+            })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with Mongoose.', uri, error,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to remote DocumentDB through our EC2 ssh tunnel with Mongoose.',
+                { error, uri, mongooseOptions },
+            ))
         )
 }
 
@@ -124,12 +133,16 @@ async function _connect({
 
     return MONGOOSE.connect(uri, mongooseOptions)
         .then(
-            () => Promise.resolve('Connected to DocumentDB with Mongoose.')
+            () => Promise.resolve({
+                message: 'Connected to remote DocumentDB with Mongoose.',
+                client: MONGOOSE,
+            })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB with Mongoose.', error,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to remote DocumentDB with Mongoose.',
+                { error, uri, mongooseOptions },
+            ))
         )
 }
 

@@ -20,6 +20,7 @@
     "@elastic/elasticsearch": "^7.2.0",
     "debug": "^4.1.1",
     "joi": "^14.3.1",
+    "node-http-error": "^2.0.0",
     "tunnel-ssh": "^4.1.4"
   },
   "gitHead": "0ddf47dc78873bb8ad2c46bb49f7c2e9c154eca5"

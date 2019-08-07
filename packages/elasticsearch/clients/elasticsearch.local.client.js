@@ -2,6 +2,7 @@
 
 const { Client } = require('@elastic/elasticsearch')
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('elasticsearch-aws-tunneling.local')
 
 /**
@@ -10,6 +11,8 @@ const DEBUG = require('debug')('elasticsearch-aws-tunneling.local')
  * @returns {{message: string, client: Client}}
  */
 module.exports.connect = options => {
+
+    DEBUG('Connecting to local Elasticsearch.')
 
     const optionsValidation = JOI
         .object()
@@ -20,7 +23,7 @@ module.exports.connect = options => {
             elasticsearchNodePort: JOI.number().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
     /**
      * @type {import '@elastic/elasticsearch'.ClientOptions}
@@ -31,7 +34,19 @@ module.exports.connect = options => {
 
     DEBUG(`Instatiating Elasticsearch client for node "${elasticsearchOptions.node}".`)
 
-    return new Client(options)
+    try {
+        const client = new Client(elasticsearchOptions)
+
+        return Promise.resolve({
+            message: 'Connected to local Elasticsearch.',
+            client: client,
+        })
+
+    } catch (error) {
+        return Promise.reject(
+            new HTTPError(500, 'Error. Could not connect to local Elasticsearch.', { error, elasticsearchOptions })
+        )
+    }
 }
 
 /**

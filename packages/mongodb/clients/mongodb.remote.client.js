@@ -2,6 +2,7 @@ const MONGODB = require('mongodb')
 const { promisify } = require('util')
 const TUNNEL = promisify(require('tunnel-ssh'))
 const JOI = require('joi')
+const HTTPError = require('node-http-error')
 const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.remote')
 
 /**
@@ -10,6 +11,8 @@ const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling.remote')
  * @returns {MONGODB.MongoClient}
  */
 module.exports.connect = async options => {
+
+    DEBUG('Connecting to remote MongoDB.')
 
     const optionsValidation = JOI
         .object()
@@ -31,7 +34,7 @@ module.exports.connect = async options => {
             documentdbPort: JOI.number().required(),
         })
         .validate(options)
-    if (optionsValidation.error) return Promise.reject(optionsValidation.error)
+    if (optionsValidation.error) throw optionsValidation.error
 
     return options.makeTunnel
         ? _connectThroughSSHTunnel(options)
@@ -45,6 +48,8 @@ module.exports.connect = async options => {
  */
 async function _connectThroughSSHTunnel(options) {
 
+    DEBUG('Client is outside VPC, connecting to cluster through SSH tunnel.')
+
     const tunnelConfigurations = {
         username: options.vpcTunnelEC2Username,
         host: options.vpcTunnelEC2Host,
@@ -57,7 +62,9 @@ async function _connectThroughSSHTunnel(options) {
 
     const tunnel = await TUNNEL(tunnelConfigurations)
         .catch(err => err)
-    if (tunnel instanceof Error) return Promise.reject(tunnel)
+    if (tunnel instanceof Error) return Promise.reject(
+        new HTTPError(500, 'Error. Could not create SSH tunnel.', { error: tunnel, options })
+    )
 
     DEBUG(`Tunnel listening on port ${options.vpcTunnelEC2PortLocal}.`)
 
@@ -86,13 +93,15 @@ async function _connectThroughSSHTunnel(options) {
     return MONGODB.connect(uri, mongoDBOptions)
         .then(
             client => Promise.resolve({
-                message: 'Connected to DocumentDB through our EC2 ssh tunnel with MongoDB.', client,
+                message: 'Connected to remote DocumentDB through our EC2 ssh tunnel with MongoDB.',
+                client: client,
             })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB through our EC2 ssh tunnel with MongoDB.', uri, error,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to remote DocumentDB through our EC2 ssh tunnel with MongoDB.',
+                { error, uri, mongoDBOptions },
+            ))
         )
 }
 
@@ -108,6 +117,8 @@ function _connect({
     documentdbClusterPort: port,
     sslCA: sslCA,
 }) {
+
+    DEBUG('Client is inside VPC, connecting directly to cluster.')
 
     /**
      * @type {MONGODB.MongoClientOptions} MongoDB connection options.
@@ -126,13 +137,15 @@ function _connect({
     return MONGODB.connect(uri, mongoDBOptions)
         .then(
             client => Promise.resolve({
-                message: 'Connected to DocumentDB with MongoDB.', client: client,
+                message: 'Connected to remote DocumentDB with MongoDB.',
+                client: client,
             })
         )
         .catch(
-            error => Promise.reject({
-                message: 'Error. Could not connect to DocumentDB with MongoDB.', error, uri,
-            })
+            error => Promise.reject(new HTTPError(
+                500, 'Error. Could not connect to remote DocumentDB with MongoDB.',
+                { error, uri, mongoDBOptions },
+            ))
         )
 }
 
