@@ -1,6 +1,6 @@
 {
   "name": "elasticsearch-aws-tunneling",
-  "version": "1.0.0-alpha.29",
+  "version": "1.0.0-alpha.31",
   "description": "Elasticsearch wich allow SSH tunneling into a AWS Elasticsearch VPC by going through a EC2 instance hosted in the same VPC.",
   "main": "index.js",
   "scripts": {
