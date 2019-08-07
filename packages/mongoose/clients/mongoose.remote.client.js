@@ -47,6 +47,8 @@ module.exports.connect = async options => {
  */
 async function _connectThroughSSHTunnel(options) {
 
+    DEBUG('Client is outside VPC, connecting to cluster through SSH tunnel.')
+
     const tunnelConfigurations = {
         username: options.vpcTunnelEC2Username,
         host: options.vpcTunnelEC2Host,
@@ -114,6 +116,8 @@ async function _connect({
     documentdbClusterPort: port,
     sslCA: sslCA,
 }) {
+
+    DEBUG('Client is inside VPC, connecting directly to cluster.')
 
     /**
      * @type {MONGOOSE.ConnectionOptions} Mongoose connection options.
