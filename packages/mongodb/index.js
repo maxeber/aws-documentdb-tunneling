@@ -6,18 +6,20 @@ const DEBUG = require('debug')('mongodb-aws-documentdb-tunneling')
 /**
  * @type {import('mongodb').MongoClient}
  */
-let MongoClient
+let Client
 
-module.exports.MongoClient = () => MongoClient
+/**
+ * @type {() => import('mongodb').MongoClient}
+ */
+module.exports.Client = () => Client
 
 /**
  * The Doosync mongodb SDK Client. To use this SDK, call the `init` function
  * as early as possible in the entry modules.
  * @param {MongoDBOptions} options Options for the ssh tunnel and mongodb client.
  * @async
- * @callback
  */
-module.exports.init = (options, callback = null) => {
+module.exports.init = options => {
 
     const environmentValidation = JOI
         .object()
@@ -26,7 +28,7 @@ module.exports.init = (options, callback = null) => {
             makeTunnel: JOI.boolean().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (environmentValidation.error) return Promise.reject(environmentValidation.error)
+    if (environmentValidation.error) throw environmentValidation.error
 
     /**
      * If if in development, don't run the shh tunnel.
@@ -39,17 +41,12 @@ module.exports.init = (options, callback = null) => {
         .then(
             ({ message, client }) => {
 
-                MongoClient = client
+                DEBUG(message)
 
-                return callback
-                    ? callback(null, message)
-                    : Promise.resolve(message)
+                Client = client
+
+                return message
             }
-        )
-        .catch(
-            error => callback
-                ? callback(error)
-                : Promise.resolve(error)
         )
 }
 

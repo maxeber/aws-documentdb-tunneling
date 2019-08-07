@@ -8,17 +8,19 @@ const DEBUG = require('debug')('elasticsearch-aws-tunneling')
 /**
  * @type {import('@elastic/elasticsearch').Client}
  */
-let ElasticsearchClient
+let Client
 
-module.exports.ElasticsearchClient = () => ElasticsearchClient
+/**
+ * @type {() => import('@elastic/elasticsearch').Client}
+ */
+module.exports.Client = () => Client
 
 /**
  * To use this SDK, call the `init` function as early as possible in the entry modules.
  * @param {ElasticsearchOptions} options Options for the SSH tunnel and `elasticsearch` client.
  * @async
- * @callback
  */
-module.exports.init = (options, callback = null) => {
+module.exports.init = options => {
 
     const environmentValidation = JOI
         .object()
@@ -27,7 +29,7 @@ module.exports.init = (options, callback = null) => {
             makeTunnel: JOI.boolean().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (environmentValidation.error) return Promise.reject(environmentValidation.error)
+    if (environmentValidation.error) throw environmentValidation.error
 
     const connect = options.env === 'local'
         ? ELASTIC_SEARCH_LOCAL.connect
@@ -37,17 +39,12 @@ module.exports.init = (options, callback = null) => {
         .then(
             ({ message, client }) => {
 
-                ElasticsearchClient = client
+                DEBUG(message)
 
-                return callback
-                    ? callback(null, message)
-                    : Promise.resolve(message)
+                Client = client
+
+                return message
             }
-        )
-        .catch(
-            error => callback
-                ? callback(error)
-                : Promise.resolve(error)
         )
 }
 

@@ -1,19 +1,25 @@
-const MONGOOSE = require('mongoose')
 const MONGOOSE_LOCAL = require('./clients/mongoose.local.client')
 const MONGOOSE_REMOTE = require('./clients/mongoose.remote.client')
 const JOI = require('joi')
 const DEBUG = require('debug')('mongoose-aws-documentdb-tunneling')
 
-module.exports.MongooseClient = MONGOOSE
+/**
+ * @type {import('mongoose')}
+ */
+let Client
+
+/**
+ * @type {() => import('mongoose')}
+ */
+module.exports.Client = () => Client
 
 /**
  * The Doosync mongoose SDK Client. To use this SDK, call the `init` function
  * as early as possible in the entry modules.
  * @param {MongooseOptions} options Options for the ssh tunnel and mongoose client.
  * @async
- * @callback
  */
-module.exports.init = (options, callback = null) => {
+module.exports.init = options => {
 
     const environmentValidation = JOI
         .object()
@@ -22,7 +28,7 @@ module.exports.init = (options, callback = null) => {
             makeTunnel: JOI.boolean().required(),
         })
         .validate(options, { allowUnknown: true })
-    if (environmentValidation.error) return Promise.reject(environmentValidation.error)
+    if (environmentValidation.error) throw environmentValidation.error
 
     /**
      * If if in development, don't run the shh tunnel.
@@ -33,14 +39,15 @@ module.exports.init = (options, callback = null) => {
 
     return connect(options)
         .then(
-            success => callback
-                ? callback(null, success)
-                : Promise.resolve(success)
-        )
-        .catch(
-            error => callback
-                ? callback(error)
-                : Promise.resolve(error)
+            ({ message, client }) => {
+
+                DEBUG(message)
+
+                Client = client
+
+                return message
+
+            }
         )
 }
 
